@@ -1,0 +1,12 @@
+<div class="confirmation-content">
+  <div class="success-icon">✓</div>
+  <h2>Booking Confirmed!</h2>
+  <div class="booking-details">
+    <p><strong>Event:</strong> {{data.event.title}}</p>
+    <p><strong>Name:</strong> {{data.name}}</p>
+    <p><strong>Email:</strong> {{data.email}}</p>
+    <p><strong>Tickets:</strong> {{data.tickets}}</p>
+    <p><strong>Total Amount:</strong> ${{getTotalPrice()}}</p>
+  </div>
+  <button mat-raised-button color="primary" (click)="close()">Done</button>
+</div> 

@@ -1,0 +1,70 @@
+@if (loading) {
+  <div class="loading-state">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading event details...</p>
+  </div>
+} @else if (error) {
+  <div class="error-state">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{error}}</p>
+    <button mat-raised-button color="primary" routerLink="/home">
+      Back to Home
+    </button>
+  </div>
+} @else if (event) {
+  <div class="event-details-container">
+    <div class="event-header">
+      <img [src]="event.image" [alt]="event.title" class="event-banner">
+      <div class="event-info-overlay">
+        <h1>{{event.title}}</h1>
+        <p class="event-meta">
+          <span>📅 {{event.date}} • {{event.time}}</span>
+          <span>📍 {{event.location}}</span>
+        </p>
+      </div>
+    </div>
+    
+    <div class="event-content">
+      <div class="main-details">
+        <div class="description-section">
+          <h2>About This Event</h2>
+          <p class="description">{{event.description}}</p>
+          
+          <!-- Show IMDb rating only for movies -->
+          @if (event.category === 'movies') {
+            <div class="imdb-rating">
+              <h3>IMDb Rating</h3>
+              <p class="rating">⭐ {{event.imdbRating}}</p>
+            </div>
+          }
+        </div>
+
+        <div class="booking-section">
+          <div class="price-section">
+            <h2>Ticket Price</h2>
+            <p class="price">From ${{event.price}}</p>
+            <button 
+              mat-raised-button 
+              color="primary" 
+              class="book-button" 
+              (click)="openBookingDialog()">
+              Book Tickets
+            </button>
+          </div>
+          
+          <div class="interest-section">
+            <p>�� {{event.interested}} people interested</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="error-state">
+    <mat-icon>event_busy</mat-icon>
+    <p>Event not found</p>
+    <button mat-raised-button color="primary" routerLink="/home">
+      Back to Home
+    </button>
+  </div>
+} 

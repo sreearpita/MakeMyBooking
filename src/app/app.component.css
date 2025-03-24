@@ -1,0 +1,53 @@
+.app-header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-name {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+main {
+  min-height: calc(100vh - 64px);
+  background-color: var(--background);
+}
+
+/* Material button overrides */
+.mat-mdc-button {
+  color: white !important;
+}
+
+.mat-mdc-button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+} 

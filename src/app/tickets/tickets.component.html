@@ -1,0 +1,47 @@
+<div class="tickets-container">
+  <h1 class="page-title">My Tickets</h1>
+
+  <div *ngIf="loading" class="loading-state">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading your tickets...</p>
+  </div>
+
+  <div *ngIf="error" class="error-state">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{error}}</p>
+  </div>
+
+  <div *ngIf="!loading && !error">
+    <div *ngIf="bookings.length === 0" class="no-tickets-message">
+      <mat-icon>confirmation_number</mat-icon>
+      <p>You don't have any tickets yet.</p>
+      <a routerLink="/home" mat-raised-button color="primary">Browse Events</a>
+    </div>
+
+    <div *ngIf="bookings.length > 0" class="tickets-list">
+      <mat-card *ngFor="let booking of bookings" class="ticket-card" [ngClass]="{'cancelled': booking.status === 'cancelled'}">
+        <div class="ticket-header">
+          <h2 class="event-title">{{booking.event.title || 'Event not available'}}</h2>
+          <span class="ticket-status" [ngClass]="booking.status">{{booking.status}}</span>
+        </div>
+
+        <div class="ticket-details">
+          <div class="ticket-info">
+            <p><strong>Booking ID:</strong> {{booking._id}}</p>
+            <p><strong>Name:</strong> {{booking.name}}</p>
+            <p><strong>Email:</strong> {{booking.email}}</p>
+            <p><strong>Tickets:</strong> {{booking.numberOfTickets}}</p>
+            <p><strong>Total Amount:</strong> ${{booking.totalAmount.toFixed(2)}}</p>
+            <p><strong>Booking Date:</strong> {{formatDate(booking.bookingDate)}}</p>
+          </div>
+
+          <div class="ticket-actions" *ngIf="booking.status === 'active'">
+            <button mat-raised-button color="warn" (click)="cancelBooking(booking._id)">
+              Cancel Booking
+            </button>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div> 

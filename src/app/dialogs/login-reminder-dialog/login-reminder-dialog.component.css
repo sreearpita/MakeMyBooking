@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  padding: 1rem;
+}
+
+p {
+  margin: 1rem 0;
+}
+
+mat-dialog-actions {
+  padding: 1rem 0 0;
+} 

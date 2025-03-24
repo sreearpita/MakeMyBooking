@@ -1,0 +1,45 @@
+.confirmation-content {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.success-icon {
+  font-size: 3rem;
+  color: #10B981;
+  margin-bottom: 1rem;
+  background: rgba(16, 185, 129, 0.1);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+h2 {
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+}
+
+.booking-details {
+  text-align: left;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.booking-details p {
+  margin: 0.5rem 0;
+  color: var(--text-muted);
+}
+
+.booking-details strong {
+  color: var(--text-color);
+}
+
+button {
+  margin-top: 1rem;
+} 

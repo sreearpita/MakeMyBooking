@@ -1,0 +1,49 @@
+<h2 mat-dialog-title>Book Tickets for {{event.title}}</h2>
+<mat-dialog-content>
+  <div class="booking-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput [(ngModel)]="bookingData.name" required>
+      <mat-error *ngIf="bookingData.name.trim() === ''">
+        Name is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input 
+        matInput 
+        type="email" 
+        [(ngModel)]="bookingData.email" 
+        (blur)="validateEmail()"
+        required
+        pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+      >
+      <mat-error *ngIf="emailError">
+        {{emailError}}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Number of Tickets</mat-label>
+      <input 
+        matInput 
+        type="number" 
+        [(ngModel)]="bookingData.numberOfTickets" 
+        min="1" 
+        required
+      >
+      <mat-error *ngIf="bookingData.numberOfTickets < 1">
+        At least 1 ticket is required
+      </mat-error>
+    </mat-form-field>
+
+    <p class="total-price">Total Price: ${{getTotalPrice()}}</p>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onConfirm()" [disabled]="!isValid()">
+    Confirm Booking
+  </button>
+</mat-dialog-actions> 

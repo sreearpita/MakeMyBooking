@@ -1,0 +1,111 @@
+<div class="admin-dashboard">
+  <h1 class="dashboard-title">Admin Dashboard</h1>
+
+  <div class="stats-cards" *ngIf="stats">
+    <mat-card class="stats-card">
+      <mat-card-content>
+        <div class="stat-value">{{ stats.totalBookings }}</div>
+        <div class="stat-label">Total Bookings</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stats-card">
+      <mat-card-content>
+        <div class="stat-value">${{ stats.totalRevenue.toFixed(2) }}</div>
+        <div class="stat-label">Total Revenue</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stats-card">
+      <mat-card-content>
+        <div class="stat-value">{{ stats.totalTickets }}</div>
+        <div class="stat-label">Total Tickets</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class="bookings-table-card">
+    <mat-card-header>
+      <mat-card-title>All Bookings</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading bookings...</p>
+      </div>
+
+      <div *ngIf="error" class="error-container">
+        <mat-icon color="warn">error_outline</mat-icon>
+        <p>{{ error }}</p>
+      </div>
+
+      <div *ngIf="!loading && !error" class="table-container">
+        <div *ngIf="bookings.length === 0" class="no-bookings-message">
+          <mat-icon>info</mat-icon>
+          <p>No bookings found. When users book tickets, they will appear here.</p>
+        </div>
+
+        <table *ngIf="bookings.length > 0" mat-table [dataSource]="filteredBookings" matSort (matSortChange)="sortData($event)" class="bookings-table">
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+            <td mat-cell *matCellDef="let booking">{{ booking.name }}</td>
+          </ng-container>
+
+          <!-- Email Column -->
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+            <td mat-cell *matCellDef="let booking">{{ booking.email }}</td>
+          </ng-container>
+
+          <!-- Event Column -->
+          <ng-container matColumnDef="event">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Event</th>
+            <td mat-cell *matCellDef="let booking">
+              {{ booking.event?.title || 'Event not available' }}
+            </td>
+          </ng-container>
+
+          <!-- Tickets Column -->
+          <ng-container matColumnDef="tickets">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tickets</th>
+            <td mat-cell *matCellDef="let booking">{{ booking.numberOfTickets }}</td>
+          </ng-container>
+
+          <!-- Amount Column -->
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
+            <td mat-cell *matCellDef="let booking">${{ booking.totalAmount.toFixed(2) }}</td>
+          </ng-container>
+
+          <!-- Date Column -->
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+            <td mat-cell *matCellDef="let booking">{{ formatDate(booking.bookingDate) }}</td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+            <td mat-cell *matCellDef="let booking">
+              <span [ngClass]="booking.status === 'active' ? 'status-active' : 'status-cancelled'">
+                {{ booking.status }}
+              </span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator 
+          *ngIf="bookings.length > 0"
+          [length]="totalBookings"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="pageSizeOptions"
+          (page)="onPageChange($event)">
+        </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div> 

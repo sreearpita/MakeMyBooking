@@ -1,0 +1,97 @@
+<main class="main-content">
+  <section class="search-section">
+    <div class="search-form">
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Search events, movies, or shows..."
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchInput()"
+        (keyup.enter)="onSearch()"
+      >
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Location"
+        [(ngModel)]="searchLocation"
+        (ngModelChange)="onSearchInput()"
+        (keyup.enter)="onSearch()"
+      >
+      <button class="search-button" (click)="onSearch()">
+        🔍 Search
+      </button>
+    </div>
+    <div class="categories">
+      <div class="category-pill" 
+           [class.active]="selectedCategory === 'all'"
+           (click)="filterEvents('all')">
+        🌟 All
+      </div>
+      <div class="category-pill" 
+           [class.active]="selectedCategory === 'concerts'"
+           (click)="filterEvents('concerts')">
+        🎵 Concerts
+      </div>
+      <div class="category-pill" 
+           [class.active]="selectedCategory === 'movies'"
+           (click)="filterEvents('movies')">
+        🎬 Movies
+      </div>
+      <div class="category-pill" 
+           [class.active]="selectedCategory === 'theater'"
+           (click)="filterEvents('theater')">
+        🎭 Theater
+      </div>
+      <div class="category-pill" 
+           [class.active]="selectedCategory === 'sports'"
+           (click)="filterEvents('sports')">
+        ⚽ Sports
+      </div>
+    </div>
+  </section>
+
+  <div class="search-status" *ngIf="searchTerm || searchLocation" 
+       style="margin: 1rem 0; color: var(--text-muted);">
+    <p>
+      Showing {{filteredEvents.length}} results
+      <span *ngIf="searchTerm"> for "{{searchTerm}}"</span>
+      <span *ngIf="searchLocation"> in "{{searchLocation}}"</span>
+    </p>
+  </div>
+
+  <section class="events-grid">
+    @if (loading) {
+      <div class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading events...</p>
+      </div>
+    } @else if (error) {
+      <div class="error-state">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{error}}</p>
+      </div>
+    } @else if (filteredEvents.length > 0) {
+      @for (event of filteredEvents; track event._id) {
+        <div class="event-card fade-enter" 
+             (click)="navigateToDetails(event)"
+             style="cursor: pointer;">
+          <div class="price-tag">From ${{event.price}}</div>
+          <img [src]="event.image" [alt]="event.title" class="event-image">
+          <div class="event-details">
+            <h3 class="event-title">{{event.title}}</h3>
+            <div class="event-info">
+              <p>📅 {{event.date}} • {{event.time}}</p>
+              <p>📍 {{event.location}}</p>
+              <p>👥 {{event.interested}} people interested</p>
+            </div>
+          </div>
+        </div>
+      }
+    } @else {
+      <div class="no-events">
+        <mat-icon>event_busy</mat-icon>
+        <p>No events found</p>
+      </div>
+    }
+  </section>
+</main> 
