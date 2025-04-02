@@ -28,7 +28,7 @@ router.post('/register', async (req, res) => {
     res.status(201).json({
       token,
       user: {
-        id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role
@@ -43,16 +43,19 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log('Login attempt for:', email);
 
     // Find user
     const user = await User.findOne({ email });
     if (!user) {
+      console.log('User not found:', email);
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
+      console.log('Invalid password for:', email);
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
@@ -63,16 +66,24 @@ router.post('/login', async (req, res) => {
       { expiresIn: '24h' }
     );
 
+    console.log('User logged in successfully:', {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    });
+
     res.json({
       token,
       user: {
-        id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role
       }
     });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(400).json({ message: error.message });
   }
 });
@@ -80,11 +91,30 @@ router.post('/login', async (req, res) => {
 // Get current user
 router.get('/me', auth, async (req, res) => {
   res.json({
-    id: req.user._id,
+    _id: req.user._id,
     name: req.user.name,
     email: req.user.email,
     role: req.user.role
   });
+});
+
+// Test authentication endpoint
+router.get('/test-auth', auth, async (req, res) => {
+  try {
+    console.log('Test auth endpoint - User:', req.user);
+    res.json({
+      message: 'Authentication successful',
+      user: {
+        _id: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+        role: req.user.role
+      }
+    });
+  } catch (error) {
+    console.error('Test auth error:', error);
+    res.status(400).json({ message: error.message });
+  }
 });
 
 module.exports = router; 

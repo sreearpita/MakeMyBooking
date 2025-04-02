@@ -11,6 +11,7 @@ import { AuthService } from '../services/auth.service';
 import { Booking } from '../interfaces/booking.interface';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { DebugInfoComponent } from '../debug-info/debug-info.component';
 
 @Component({
   selector: 'app-tickets',
@@ -21,7 +22,8 @@ import { take } from 'rxjs/operators';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    DebugInfoComponent
   ],
   templateUrl: './tickets.component.html',
   styleUrls: ['./tickets.component.css']
@@ -70,16 +72,37 @@ export class TicketsComponent implements OnInit, OnDestroy {
   }
 
   private fetchBookings(userId: string): void {
+    console.log('Fetching bookings for user ID:', userId);
+    
+    // First try with the new field name 'user'
     this.ticketsService.getUserBookings(userId).subscribe({
       next: (bookings) => {
-        console.log('User bookings:', bookings);
+        console.log('User bookings (user field):', bookings);
         this.bookings = bookings;
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading bookings:', error);
-        this.error = 'Failed to load your tickets. Please try again later.';
-        this.loading = false;
+        console.error('Error loading bookings with user field:', error);
+        
+        // If that fails, try the debug endpoint which checks both fields
+        this.ticketsService.debugUserBookings(userId).subscribe({
+          next: (debugInfo) => {
+            console.log('Debug info:', debugInfo);
+            if (debugInfo.matchingBookings && debugInfo.matchingBookings.length > 0) {
+              this.bookings = debugInfo.matchingBookings;
+              this.loading = false;
+            } else {
+              // If still no bookings, show a clear message
+              this.error = 'No tickets found for your account.';
+              this.loading = false;
+            }
+          },
+          error: (debugError) => {
+            console.error('Debug endpoint error:', debugError);
+            this.error = 'Failed to load your tickets. Please try again later.';
+            this.loading = false;
+          }
+        });
       }
     });
   }
@@ -109,6 +132,24 @@ export class TicketsComponent implements OnInit, OnDestroy {
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
+    });
+  }
+
+  createTestBooking(): void {
+    this.loading = true;
+    this.error = null;
+    
+    this.ticketsService.createTestBooking().subscribe({
+      next: (booking) => {
+        console.log('Test booking created:', booking);
+        this.bookings = [booking];
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error creating test booking:', error);
+        this.error = 'Failed to create test booking. Please try again later.';
+        this.loading = false;
+      }
     });
   }
 } 

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterOutlet, RouterModule } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,20 +21,30 @@ import { AuthService } from './services/auth.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  constructor(public authService: AuthService) {}
+  private isBrowser: boolean;
+
+  constructor(
+    public authService: AuthService,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
 
   ngOnInit(): void {
-    // Check if user is already logged in from localStorage
-    const token = localStorage.getItem('token');
-    const userJson = localStorage.getItem('user');
-    
-    if (token && userJson) {
-      try {
-        // User is already logged in, no need to do anything
-        console.log('User already logged in');
-      } catch (e) {
-        console.error('Error parsing user from localStorage', e);
-        this.authService.logout();
+    // Only check localStorage in browser environment
+    if (this.isBrowser) {
+      // Check if user is already logged in from localStorage
+      const token = localStorage.getItem('token');
+      const userJson = localStorage.getItem('user');
+      
+      if (token && userJson) {
+        try {
+          // User is already logged in, no need to do anything
+          console.log('User already logged in');
+        } catch (e) {
+          console.error('Error parsing user from localStorage', e);
+          this.authService.logout();
+        }
       }
     }
   }

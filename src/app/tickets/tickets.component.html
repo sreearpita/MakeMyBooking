@@ -43,5 +43,12 @@
         </div>
       </mat-card>
     </div>
+
+    <div *ngIf="error && bookings.length === 0">
+      <p>{{ error }}</p>
+      <button mat-raised-button color="primary" (click)="createTestBooking()">Create Test Booking</button>
+    </div>
   </div>
+
+  <app-debug-info></app-debug-info>
 </div> 

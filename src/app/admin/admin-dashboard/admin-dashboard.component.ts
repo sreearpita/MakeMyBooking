@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { AdminService, BookingStats } from '../../services/admin.service';
 import { Booking } from '../../interfaces/booking.interface';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -44,45 +45,35 @@ export class AdminDashboardComponent implements OnInit {
   pageIndex = 0;
   totalBookings = 0;
 
-  constructor(private adminService: AdminService) {}
+  constructor(private adminService: AdminService, private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.loadBookings();
-    this.loadStats();
-  }
-
-  loadBookings(): void {
     this.loading = true;
-    this.adminService.getAllBookings().subscribe({
-      next: (bookings) => {
-        console.log('All bookings:', bookings);
-        
-        // Check which bookings have missing event data
-        const missingEventBookings = bookings.filter(booking => !booking.event);
-        if (missingEventBookings.length > 0) {
-          console.warn('Bookings with missing event data:', missingEventBookings);
-        }
-        
-        this.bookings = bookings.filter(booking => booking.event);
-        this.totalBookings = this.bookings.length;
-        this.updateFilteredBookings();
-        this.loading = false;
-      },
-      error: (error) => {
-        this.error = 'Failed to load bookings. Please try again later.';
-        this.loading = false;
-        console.error('Error loading bookings:', error);
-      }
-    });
-  }
-
-  loadStats(): void {
+    
+    // Get booking statistics
     this.adminService.getBookingStats().subscribe({
       next: (stats) => {
+        console.log('Admin stats:', stats);
         this.stats = stats;
       },
       error: (error) => {
         console.error('Error loading stats:', error);
+      }
+    });
+    
+    // Get all bookings
+    this.adminService.getAllBookings().subscribe({
+      next: (bookings) => {
+        console.log('Admin bookings:', bookings);
+        this.bookings = bookings;
+        this.totalBookings = bookings.length;
+        this.updateFilteredBookings();
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading bookings:', error);
+        this.error = 'Failed to load bookings';
+        this.loading = false;
       }
     });
   }
@@ -125,5 +116,117 @@ export class AdminDashboardComponent implements OnInit {
 
   formatDate(date: string): string {
     return new Date(date).toLocaleString();
+  }
+
+  fixAllBookings(): void {
+    this.adminService.fixAllBookings().subscribe({
+      next: (result) => {
+        console.log('Fix result:', result);
+        alert(`Fix completed: ${result.updatedBookings} bookings updated out of ${result.totalBookings}`);
+        // Reload bookings after fix
+        this.loadBookings();
+      },
+      error: (error) => {
+        console.error('Error fixing bookings:', error);
+        alert('Failed to fix bookings. See console for details.');
+      }
+    });
+  }
+
+  manualFixBookings(): void {
+    // Get all bookings
+    this.adminService.getAllBookings().subscribe(bookings => {
+      console.log(`Found ${bookings.length} bookings`);
+      
+      // Filter bookings that need fixing
+      const bookingsToFix = bookings.filter(booking => 
+        booking.userId && !booking.user
+      );
+      
+      console.log(`Found ${bookingsToFix.length} bookings to fix`);
+      
+      // Fix each booking
+      let fixedCount = 0;
+      bookingsToFix.forEach(booking => {
+        // Create a new booking object with user field
+        const fixedBooking = {
+          ...booking,
+          user: booking.userId
+        };
+        
+        // Update the booking
+        this.http.put(`${this.adminService.apiUrl}/${booking._id}`, fixedBooking)
+          .subscribe({
+            next: () => {
+              console.log(`Fixed booking ${booking._id}`);
+              fixedCount++;
+              if (fixedCount === bookingsToFix.length) {
+                console.log(`Fixed ${fixedCount} bookings`);
+                alert(`Fixed ${fixedCount} bookings`);
+                this.loadBookings();
+              }
+            },
+            error: (error) => {
+              console.error(`Error fixing booking ${booking._id}:`, error);
+            }
+          });
+      });
+      
+      if (bookingsToFix.length === 0) {
+        alert('No bookings need fixing');
+      }
+    });
+  }
+
+  checkBookingFields(): void {
+    this.adminService.getAllBookings().subscribe(bookings => {
+      console.log(`Found ${bookings.length} total bookings`);
+      
+      // Check for bookings with userId but no user
+      const bookingsWithUserId = bookings.filter(b => b.userId);
+      const bookingsWithUser = bookings.filter(b => b.user);
+      const bookingsWithBoth = bookings.filter(b => b.userId && b.user);
+      const bookingsWithNeither = bookings.filter(b => !b.userId && !b.user);
+      
+      console.log(`Bookings with userId: ${bookingsWithUserId.length}`);
+      console.log(`Bookings with user: ${bookingsWithUser.length}`);
+      console.log(`Bookings with both fields: ${bookingsWithBoth.length}`);
+      console.log(`Bookings with neither field: ${bookingsWithNeither.length}`);
+      
+      // Check if any bookings still need fixing
+      const bookingsNeedingFix = bookings.filter(b => b.userId && !b.user);
+      console.log(`Bookings still needing fix: ${bookingsNeedingFix.length}`);
+      
+      if (bookingsNeedingFix.length > 0) {
+        console.log('Sample booking needing fix:', bookingsNeedingFix[0]);
+      }
+      
+      alert(`
+        Total bookings: ${bookings.length}
+        With userId: ${bookingsWithUserId.length}
+        With user: ${bookingsWithUser.length}
+        With both: ${bookingsWithBoth.length}
+        With neither: ${bookingsWithNeither.length}
+        Still needing fix: ${bookingsNeedingFix.length}
+      `);
+    });
+  }
+
+  loadBookings(): void {
+    this.loading = true;
+    this.adminService.getAllBookings().subscribe({
+      next: (bookings) => {
+        console.log('Admin bookings:', bookings);
+        this.bookings = bookings;
+        this.totalBookings = bookings.length;
+        this.updateFilteredBookings();
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading bookings:', error);
+        this.error = 'Failed to load bookings';
+        this.loading = false;
+      }
+    });
   }
 } 

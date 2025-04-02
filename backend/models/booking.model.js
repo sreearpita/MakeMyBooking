@@ -7,9 +7,10 @@ const bookingSchema = new Schema({
     ref: 'Event',
     required: true
   },
-  userId: {
+  user: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    required: true
   },
   name: { type: String, required: true },
   email: { type: String, required: true },

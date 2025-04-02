@@ -81,35 +81,44 @@ export class EventDetailsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: BookingData) => {
       if (result) {
-        this.authService.user$.pipe(take(1)).subscribe(user => {
-          if (user) {
-            this.ticketsService.createBooking({
-              event: this.event!,
-              userId: user._id,
-              name: result.name,
-              email: result.email,
-              numberOfTickets: result.numberOfTickets,
-              totalAmount: this.event!.price * result.numberOfTickets
-            }).subscribe({
-              next: (booking: Booking) => {
-                this.dialog.open(BookingConfirmationDialog, {
-                  width: '400px',
-                  panelClass: 'custom-dialog',
-                  data: {
-                    name: booking.name,
-                    email: booking.email,
-                    tickets: booking.numberOfTickets,
-                    event: this.event
-                  }
-                });
-              },
-              error: (error: any) => {
-                console.error('Booking failed:', error);
-                // You might want to show an error dialog here
-              }
-            });
-          }
-        });
+        const currentUser = this.authService.getCurrentUser();
+        
+        if (currentUser && currentUser._id) {
+          console.log('Current user:', currentUser);
+          
+          // Create booking data object
+          const bookingData = {
+            event: this.event!._id, // Make sure we're sending the ID, not the whole object
+            user: currentUser._id, // Use 'user' instead of 'userId' to match the backend model
+            name: result.name,
+            email: result.email,
+            numberOfTickets: result.numberOfTickets,
+            totalAmount: this.event!.price * result.numberOfTickets
+          };
+          
+          console.log('Booking data being sent:', JSON.stringify(bookingData));
+          
+          this.ticketsService.createBooking(bookingData).subscribe({
+            next: (booking: Booking) => {
+              console.log('Booking created successfully:', booking);
+              this.dialog.open(BookingConfirmationDialog, {
+                width: '400px',
+                panelClass: 'custom-dialog',
+                data: {
+                  name: booking.name,
+                  email: booking.email,
+                  tickets: booking.numberOfTickets,
+                  event: this.event
+                }
+              });
+            },
+            error: (error: any) => {
+              console.error('Booking failed:', error);
+            }
+          });
+        } else {
+          console.error('No user ID available for booking');
+        }
       }
     });
   }
