@@ -40,10 +40,13 @@ ng serve
 ## Built With
 
 - [Angular](https://angular.io/) - Frontend Framework
+- [Node.js](https://nodejs.org/) - Backend Runtime Environment
+- [MongoDB](https://www.mongodb.com/) - Database
 - [Angular Material](https://material.angular.io/) - UI Component Library
 - [TypeScript](https://www.typescriptlang.org/) - Programming Language
+- [Express.js](https://expressjs.com/) - Backend Framework
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
@@ -197,13 +200,13 @@ ng test
 ng e2e
 ```
 
-## 📦 Building for Production
+## Building for Production
 
 ```bash
 ng build --prod
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
@@ -211,6 +214,6 @@ ng build --prod
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
