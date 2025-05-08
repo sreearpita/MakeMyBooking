@@ -2,14 +2,14 @@
 
 A modern event booking and ticketing platform built with Angular, allowing users to discover, search, and book various events including concerts, movies, theater shows, and sports events.
 
-## 🌟 Features
+## Features
 
 - **Smart Search**: Search events by name and location
 - **Category Filtering**: Browse events by categories (Concerts, Movies, Theater, Sports)
 - **Interactive UI**: Modern and responsive design with smooth animations
 - **User-friendly Interface**: Intuitive navigation and booking process
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -37,7 +37,7 @@ ng serve
 
 4. Open your browser and navigate to `http://localhost:4200`
 
-## 🛠️ Built With
+## Built With
 
 - [Angular](https://angular.io/) - Frontend Framework
 - [Angular Material](https://material.angular.io/) - UI Component Library
@@ -187,7 +187,7 @@ src/
    mongorestore --db makemybooking ./backup/makemybooking
    ```
 
-## 🧪 Running Tests
+##  Running Tests
 
 ```bash
 # Unit tests
@@ -214,16 +214,3 @@ ng build --prod
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👥 Authors
-
-- Your Name - Initial work
-
-## 🙏 Acknowledgments
-
-- Angular Material for the UI components
-- All contributors who have helped shape this project
-
-## 📞 Support
-
-For support, email support@makemybooking.com or create an issue in the repository.
